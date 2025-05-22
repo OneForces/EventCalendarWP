@@ -1,0 +1,16 @@
+/* тёмная тема */
+.fc {
+    background-color: #111;
+    color: #f1f1f1;
+}
+.fc-toolbar-title {
+    color: #f1f1f1;
+}
+.fc-button {
+    background-color: #333;
+    border-color: #333;
+}
+.fc-button-primary {
+    background-color: #444;
+    border-color: #444;
+}

@@ -1,0 +1,8 @@
+/* светлая тема — по умолчанию */
+.fc {
+    background-color: #fff;
+    color: #000;
+}
+.fc-toolbar-title {
+    color: #111;
+}

@@ -1,0 +1,20 @@
+msgid "Events"
+msgstr "Мероприятия"
+
+msgid "Add New Event"
+msgstr "Добавить мероприятие"
+
+msgid "All Events"
+msgstr "Все мероприятия"
+
+msgid "Event Types"
+msgstr "Типы мероприятий"
+
+msgid "Organizers"
+msgstr "Организаторы"
+
+msgid "Venues"
+msgstr "Места проведения"
+
+msgid "Settings"
+msgstr "Настройки"
