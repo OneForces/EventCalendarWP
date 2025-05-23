@@ -11,12 +11,9 @@ function ec_event_details_box($post) {
     $end      = get_post_meta($post->ID, 'ec_event_end', true);
     $all_day  = get_post_meta($post->ID, 'ec_event_all_day', true);
     $address  = get_post_meta($post->ID, 'ec_event_address', true);
-    $orgs     = get_terms(['taxonomy' => 'ec_organizer', 'hide_empty' => false]);
-    $org_term = wp_get_post_terms($post->ID, 'ec_organizer', ['fields' => 'ids']);
     $org_id   = $org_term[0] ?? 0;
 
-    $email = $org_id ? get_term_meta($org_id, 'ec_organizer_email', true) : '';
-    $phone = $org_id ? get_term_meta($org_id, 'ec_organizer_phone', true) : '';
+
 
     $start_value = $start ? date('Y-m-d\TH:i', strtotime($start)) : '';
     $end_value   = $end   ? date('Y-m-d\TH:i', strtotime($end))   : '';
@@ -30,8 +27,6 @@ function ec_event_details_box($post) {
 
     <p><label><input type="checkbox" name="ec_event_all_day" value="1" <?php checked($all_day, '1'); ?>> Весь день</label></p>
 
-    <p><label>Адрес мероприятия:<br>
-        <input type="text" name="ec_event_address" value="<?= esc_attr($address); ?>" style="width:100%;"></label></p>
 
     <?php if ($address): ?>
         <iframe width="100%" height="300" style="border:0" loading="lazy" allowfullscreen
@@ -39,23 +34,6 @@ function ec_event_details_box($post) {
     <?php endif; ?>
 
     <hr>
-
-    <p><label>Организатор:</label><br>
-        <select name="ec_event_organizer" id="ec_event_organizer" style="width:100%;">
-            <option value="">— Не выбран —</option>
-            <?php foreach ($orgs as $org): ?>
-                <option value="<?= $org->term_id; ?>" <?= selected($org_id, $org->term_id, false); ?>>
-                    <?= esc_html($org->name); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </p>
-
-    <p><label>Email организатора:<br>
-        <input type="email" name="ec_event_organizer_email" value="<?= esc_attr($email); ?>" style="width:100%;" readonly></label></p>
-
-    <p><label>Телефон организатора:<br>
-        <input type="text" name="ec_event_organizer_phone" value="<?= esc_attr($phone); ?>" style="width:100%;" readonly></label></p>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -78,19 +56,19 @@ function ec_event_details_box($post) {
     <?php
 }
 
-// ✅ Обработка ajax для организатора
-add_action('wp_ajax_ec_get_organizer_info', function () {
-    $id = intval($_GET['term_id'] ?? 0);
-    wp_send_json([
-        'email' => get_term_meta($id, 'ec_organizer_email', true),
-        'phone' => get_term_meta($id, 'ec_organizer_phone', true),
-    ]);
-});
+
 
 
 function ec_render_repeat_metabox($post) {
     $type  = get_post_meta($post->ID, 'ec_event_repeat_type', true) ?: 'none';
-    $until = get_post_meta($post->ID, 'ec_event_repeat_until', true);
+    $until_raw = get_post_meta($post->ID, 'ec_event_repeat_until', true);
+
+    // Приводим к формату datetime-local (если есть)
+    $until = '';
+    if ($until_raw) {
+        $timestamp = strtotime($until_raw);
+        $until = date('Y-m-d\TH:i', $timestamp); // Пример: 2025-06-01T14:30
+    }
 
     wp_nonce_field('ec_repeat_nonce_action', 'ec_repeat_nonce');
     ?>
@@ -100,12 +78,15 @@ function ec_render_repeat_metabox($post) {
             <option value="daily"   <?php selected($type, 'daily'); ?>>Ежедневно</option>
             <option value="weekly"  <?php selected($type, 'weekly'); ?>>Еженедельно</option>
             <option value="monthly" <?php selected($type, 'monthly'); ?>>Ежемесячно</option>
-        </select></label></p>
+        </select>
+    </label></p>
 
     <p><label>Повторять до:<br>
-        <input type="date" name="ec_event_repeat_until" value="<?= esc_attr($until); ?>" style="width:100%;"></label></p>
+        <input type="datetime-local" name="ec_event_repeat_until" value="<?= esc_attr($until); ?>" style="width:100%;">
+    </label></p>
     <?php
 }
+
 
 add_action('save_post', 'ec_save_event_meta');
 function ec_save_event_meta($post_id) {

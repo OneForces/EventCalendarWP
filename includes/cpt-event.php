@@ -24,25 +24,14 @@ function ec_register_event_cpt() {
         'has_archive' => true,
         'rewrite' => ['slug' => 'events'],
         'show_in_rest' => true,
+        'taxonomies' => ['ec_event_type'],
     ];
 
     register_post_type('ec_event', $args);
 }
+
+
+
 add_action('init', 'ec_register_event_cpt');
 
 
-function ec_register_rsvp_post_type() {
-    register_post_type('ec_rsvp', [
-        'labels' => [
-            'name' => 'Заявки на мероприятия',
-            'singular_name' => 'RSVP',
-        ],
-        'public' => false,
-        'show_ui' => true,
-        'supports' => ['title'],
-        'capability_type' => 'post',
-        'menu_position' => 30,
-        'menu_icon' => 'dashicons-email-alt',
-    ]);
-}
-add_action('init', 'ec_register_rsvp_post_type');

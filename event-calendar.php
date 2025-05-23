@@ -14,35 +14,73 @@ require_once __DIR__ . '/includes/meta-boxes.php';
 require_once __DIR__ . '/includes/taxonomies.php';
 require_once __DIR__ . '/includes/export.php';
 
-
+require_once plugin_dir_path(__FILE__) . 'includes/functions.php';
 
 
 add_action('wp_enqueue_scripts', 'ec_enqueue_calendar_assets');
 
 function ec_enqueue_calendar_assets() {
-    wp_enqueue_style('fullcalendar-css', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css');
-    wp_enqueue_style('ec-calendar-css', plugin_dir_url(__FILE__) . 'assets/css/calendar.css');
-    wp_enqueue_script(
-    'yandex-maps',
-    'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=8198171c-f3f3-461a-b8e5-2d7cb5512ebd',
-    [],
-    null,
-    true );
-    wp_enqueue_script('fullcalendar-js', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js', [], null, true);
-    wp_localize_script('ec-calendar-js', 'ec_calendar_data', [
-    'ajax_url'      => admin_url('admin-ajax.php'),
-    'default_view'  => get_option('ec_default_view', 'dayGridMonth'),
-    'timezone'      => get_option('ec_timezone', wp_timezone_string()),
-    ]);
-    wp_enqueue_script('ec-yamap', plugin_dir_url(__FILE__) . 'assets/js/yamap.js', ['yandex-maps'], null, true);
-    wp_enqueue_script('ec-calendar-js', plugin_dir_url(__FILE__) . 'assets/js/calendar.js', ['fullcalendar-js'], null, true);
+    // 📦 Стили
+    wp_enqueue_style(
+        'fullcalendar-css',
+        'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css'
+    );
+    wp_enqueue_style(
+        'ec-calendar-css',
+        plugin_dir_url(__FILE__) . 'assets/css/calendar.css'
+    );
 
+    // 📅 Скрипты FullCalendar
+    wp_enqueue_script(
+        'fullcalendar-js',
+        'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js',
+        [],
+        null,
+        true
+    );
+
+    wp_enqueue_script(
+        'fullcalendar-locales',
+        'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/ru.global.min.js',
+        ['fullcalendar-js'],
+        null,
+        true
+    );
+
+    wp_enqueue_script(
+        'ec-calendar-js',
+        plugin_dir_url(__FILE__) . 'assets/js/calendar.js',
+        ['fullcalendar-js', 'fullcalendar-locales'],
+        null,
+        true
+    );
+
+    wp_enqueue_script(
+        'yandex-maps',
+        'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=...',
+        [],
+        null,
+        true
+    );
+
+    wp_enqueue_script(
+        'ec-yamap',
+        plugin_dir_url(__FILE__) . 'assets/js/yamap.js',
+        ['yandex-maps'],
+        null,
+        true
+    );
+
+    // 🔧 Передача параметров в JS
     wp_localize_script('ec-calendar-js', 'ec_calendar_data', [
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'timezone' => wp_timezone_string(),
-        'default_view' => 'dayGridMonth',
+        'ajax_url'     => admin_url('admin-ajax.php'),
+        'default_view' => get_option('ec_default_view', 'dayGridMonth'),
+        'timezone'     => get_option('ec_timezone', wp_timezone_string()),
     ]);
 }
+
+
+
 
 
 add_action('plugins_loaded', 'ec_load_textdomain');
@@ -304,7 +342,6 @@ add_action('template_redirect', function () {
 
     $start = get_post_meta($post->ID, 'ec_event_start', true);
     $end   = get_post_meta($post->ID, 'ec_event_end', true) ?: $start;
-    $location = get_post_meta($post->ID, 'ec_event_address', true);
 
     $dt_start = gmdate('Ymd\THis\Z', strtotime($start));
     $dt_end   = gmdate('Ymd\THis\Z', strtotime($end));
@@ -330,7 +367,6 @@ add_action('template_redirect', function () {
     exit;
 });
 
-
 add_filter('the_content', 'ec_render_full_event_content');
 function ec_render_full_event_content($content): mixed {
     if (!is_singular('ec_event') || !in_the_loop() || !is_main_query()) {
@@ -348,19 +384,7 @@ function ec_render_full_event_content($content): mixed {
     <div class="ec-single-event">
         <h1 class="ec-title"><?php the_title(); ?></h1>
 
-        <div class="ec-rsvp">
-            <h3>Записаться на мероприятие</h3>
-
-            <?php if (isset($_GET['rsvp']) && $_GET['rsvp'] == 1): ?>
-                <p><strong style="color:green;">Спасибо за регистрацию!</strong></p>
-            <?php endif; ?>
-
-            <form method="post">
-                <input type="text" name="ec_rsvp_name" placeholder="Ваше имя" required>
-                <input type="email" name="ec_rsvp_email" placeholder="Email" required>
-                <input type="submit" name="ec_rsvp_submit" value="Записаться">
-            </form>
-        </div>
+        <!-- Здесь можно добавить другие данные: описание, организатор, место и т.д. -->
 
         <div class="ec-actions">
             <p><a class="button" href="<?= esc_url($ics_url); ?>">📅 Экспорт в календарь (.ics)</a></p>
@@ -455,3 +479,4 @@ function ec_render_rsvp_list() {
 
     echo '</tbody></table></div>';
 }
+

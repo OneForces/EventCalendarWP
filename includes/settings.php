@@ -1,31 +1,35 @@
 <?php
 
-// === 1. Регистрируем страницу настроек ===
-function ec_register_settings_page() {
-    add_options_page(
-        'Настройки календаря',
-        'Настройки календаря',
-        'manage_options',
-        'ec-settings',
-        'ec_render_settings_page'
-    );
+// === 1. Регистрируем пункт меню настроек ===
+if (!function_exists('ec_register_settings_page')) {
+    function ec_register_settings_page() {
+        add_options_page(
+            'Настройки календаря мероприятий', // Заголовок страницы
+            'Настройки календаря',             // Название в меню
+            'manage_options',
+            'ec-settings',                     // Слаг страницы
+            'ec_render_settings_page'          // Колбэк-функция
+        );
+    }
+    add_action('admin_menu', 'ec_register_settings_page');
 }
-add_action('admin_menu', 'ec_register_settings_page');
 
 // === 2. Шаблон страницы настроек ===
-function ec_render_settings_page() {
-    ?>
-    <div class="wrap">
-        <h1>Настройки календаря мероприятий</h1>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields('ec_settings_group');
-            do_settings_sections('ec-settings');
-            submit_button();
-            ?>
-        </form>
-    </div>
-    <?php
+if (!function_exists('ec_render_settings_page')) {
+    function ec_render_settings_page() {
+        ?>
+        <div class="wrap">
+            <h1>Настройки календаря мероприятий</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('ec_settings_group');
+                do_settings_sections('ec-settings');
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <?php
+    }
 }
 
 // === 3. Регистрируем настройки ===
@@ -45,7 +49,6 @@ function ec_register_settings() {
     add_settings_field('ec_auto_delete_days', 'Удаление старых событий (дней)', 'ec_delete_days_callback', 'ec-settings', 'ec_main_section');
 }
 add_action('admin_init', 'ec_register_settings');
-
 
 // === 4. CALLBACKS ===
 function ec_theme_callback() {

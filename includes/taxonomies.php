@@ -1,5 +1,4 @@
 <?php
-// Регистрация таксономий
 add_action('init', 'ec_register_taxonomies');
 
 function ec_register_taxonomies() {
@@ -7,30 +6,37 @@ function ec_register_taxonomies() {
     // Типы мероприятий
     register_taxonomy('ec_event_type', 'ec_event', [
         'label' => 'Типы мероприятий',
-        'hierarchical' => true,
+        'hierarchical' => false,
         'show_ui' => true,
         'show_admin_column' => true,
+        'show_in_rest' => true,
+        'rest_base' => 'event-types', // 🔧 добавлено
         'rewrite' => ['slug' => 'event-type'],
     ]);
 
-    // Организаторы
     register_taxonomy('ec_organizer', 'ec_event', [
         'label' => 'Организаторы',
         'hierarchical' => false,
         'show_ui' => true,
         'show_admin_column' => true,
-        'rewrite' => ['slug' => 'organizer'],
+        'show_in_rest' => true,
+        'rest_base' => 'organizers',
+        'rewrite' => ['slug' => 'ec-organizer'],
+        'meta_box_cb' => 'post_tags_meta_box',
     ]);
 
-    // Места проведения
     register_taxonomy('ec_location', 'ec_event', [
         'label' => 'Места проведения',
         'hierarchical' => false,
         'show_ui' => true,
         'show_admin_column' => true,
-        'rewrite' => ['slug' => 'location'],
+        'show_in_rest' => true,
+        'rest_base' => 'locations',
+        'rewrite' => ['slug' => 'ec-location'],
+        'meta_box_cb' => 'post_tags_meta_box',
     ]);
 }
+
 
 
 // Добавление полей цвета к типам мероприятий
