@@ -12,7 +12,6 @@ require_once __DIR__ . '/includes/settings.php';
 require_once __DIR__ . '/includes/cpt-event.php';
 require_once __DIR__ . '/includes/meta-boxes.php';
 require_once __DIR__ . '/includes/taxonomies.php';
-require_once __DIR__ . '/includes/export.php';
 
 require_once plugin_dir_path(__FILE__) . 'includes/functions.php';
 

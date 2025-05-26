@@ -1,7 +1,7 @@
 <?php
 function ec_add_export_menu_item() {
     add_submenu_page(
-        'edit.php?post_type=event',
+        'edit.php?post_type=ec_event',
         'Экспорт мероприятий',
         'Экспорт',
         'manage_options',
@@ -35,19 +35,19 @@ function ec_export_events_to_csv() {
     fputcsv($output, ['Название', 'Дата начала', 'Дата окончания', 'Организатор', 'Место', 'Тип']);
 
     $query = new WP_Query([
-        'post_type' => 'event',
+        'post_type' => 'ec_event',
         'posts_per_page' => -1,
     ]);
 
     while ($query->have_posts()) {
         $query->the_post();
 
-        $start = get_post_meta(get_the_ID(), '_event_start', true);
-        $end = get_post_meta(get_the_ID(), '_event_end', true);
+        $start = get_post_meta(get_the_ID(), 'ec_event_start', true);
+        $end = get_post_meta(get_the_ID(), 'ec_event_end', true);
 
-        $organizer = wp_get_post_terms(get_the_ID(), 'organizer', ['fields' => 'names']);
-        $location = wp_get_post_terms(get_the_ID(), 'location', ['fields' => 'names']);
-        $type = wp_get_post_terms(get_the_ID(), 'event_type', ['fields' => 'names']);
+        $organizer = wp_get_post_terms(get_the_ID(), 'ec_organizer', ['fields' => 'names']);
+        $location = wp_get_post_terms(get_the_ID(), 'ec_location', ['fields' => 'names']);
+        $type = wp_get_post_terms(get_the_ID(), 'ec_event_type', ['fields' => 'names']);
 
         fputcsv($output, [
             get_the_title(),

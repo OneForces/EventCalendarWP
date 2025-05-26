@@ -1,8 +1,16 @@
 <?php
-get_header();
-?>
+get_header(); ?>
 
-<div id="ec-calendar" style="max-width: 1200px; margin: 0 auto; padding: 0;"></div>
+<div class="ec-event-archive-grid">
+    <div class="ec-event-list">
+        <h2>Предстоящие мероприятия</h2>
+        <?php echo do_shortcode('[event_list]'); ?>
+    </div>
 
-<?php
-get_footer();
+    <div class="ec-event-calendar">
+        <h2>Календарь</h2>
+        <?php echo do_shortcode('[event_calendar]'); ?>
+    </div>
+</div>
+
+<?php get_footer(); ?>

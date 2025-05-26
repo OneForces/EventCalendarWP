@@ -1,7 +1,7 @@
 /* Сетка заголовка и панелей */
 .fc-header-toolbar {
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
+    display: grid ;
+    grid-template-columns: 1fr auto 1fr ;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
@@ -46,7 +46,7 @@
     border-bottom: 1px solid #e0e0e0;
 }
 .fc-timegrid-slot:nth-child(even) {
-    background-color: #f9f9f9;
+    
 }
 .fc-timegrid-slot:last-child {
     border-bottom: 2px solid #ccc;
@@ -59,10 +59,10 @@
 .fc-scroller-liquid-absolute,
 .fc-timegrid,
 .fc-timegrid-body {
-    background: #fff !important;
-    height: auto !important;
-    max-height: unset !important;
-    overflow: hidden !important;
+    background: #fff ;
+    height: auto ;
+    max-height: unset ;
+    overflow: hidden ;
 }
 
 /* Общее оформление блока календаря */
@@ -83,7 +83,7 @@
 /* Медиазапрос для мобильных */
 @media (max-width: 480px) {
     .fc-header-toolbar {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr ;
         grid-template-rows: auto auto auto;
     }
 
@@ -100,5 +100,86 @@
     .fc .fc-button {
         font-size: 0.75rem;
         padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Подсветка выходных дней */
+.fc-day-sat,
+.fc-day-sun {
+    background-color: #f5f5f5;
+}
+
+/* Границы ячеек */
+.fc-daygrid-day {
+    border: 1px solid #ddd;
+}
+
+/* GRID макет страницы архива */
+.ec-event-archive-grid {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    
+}
+
+/* Левая колонка — список */
+.ec-event-list {
+    flex: 1 1 400px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+/* Правая колонка — календарь */
+.ec-event-calendar {
+    flex: 2 1 600px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Заголовки блоков */
+.ec-event-list h2,
+.ec-event-calendar h2 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Карточки мероприятий */
+.ec-event-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.ec-event-list li {
+    background: #f3f6f9;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-left: 4px solid #1976d2;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+.ec-event-list li:hover {
+    background: #eaeef3;
+}
+.ec-event-list a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Адаптив */
+@media (max-width: 900px) {
+    .ec-event-archive-grid {
+        flex-direction: column;
     }
 }

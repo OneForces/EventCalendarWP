@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!calendarEl) return;
 
+    // Подключение темы (dark/light) автоматически
+    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = theme === 'dark' ? '/wp-content/plugins/event-calendar/assets/css/calendar-dark.css'
+                                 : '/wp-content/plugins/event-calendar/assets/css/calendar-light.css';
+    document.head.appendChild(link);
+
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'ru',
         slotDuration: '02:00:00',

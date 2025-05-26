@@ -2,17 +2,16 @@
 
 function ec_register_event_cpt() {
     $labels = [
-        'name' => 'Календарь мероприятий',
+        'name' => 'Мероприятия',
         'singular_name' => 'Мероприятие',
         'add_new' => 'Добавить мероприятие',
-        'add_new_item' => 'Добавить новое мероприятие',
+        'add_new_item' => 'Новое мероприятие',
         'edit_item' => 'Редактировать мероприятие',
         'new_item' => 'Новое мероприятие',
-        'view_item' => 'Просмотреть мероприятие',
+        'view_item' => 'Смотреть мероприятие',
         'search_items' => 'Искать мероприятия',
         'not_found' => 'Не найдено',
         'not_found_in_trash' => 'В корзине не найдено',
-        'menu_name' => 'Календарь мероприятий'
     ];
 
     $args = [
@@ -24,14 +23,10 @@ function ec_register_event_cpt() {
         'has_archive' => true,
         'rewrite' => ['slug' => 'events'],
         'show_in_rest' => true,
-        'taxonomies' => ['ec_event_type'],
+        'taxonomies' => ['ec_event_type', 'ec_organizer', 'ec_location'],
     ];
 
     register_post_type('ec_event', $args);
 }
 
-
-
 add_action('init', 'ec_register_event_cpt');
-
-

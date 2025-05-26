@@ -1,58 +1,60 @@
-<?php get_header(); ?>
-
-<main id="primary" class="site-main">
-<?php echo '<div style="background:red;color:white;padding:5px;">ШАБЛОН: single-ec_event.php</div>'; ?>
 <?php
+get_header();
+
 if (have_posts()) :
-    while (have_posts()) : the_post();
+    while (have_posts()) : the_post(); ?>
 
-        $event_id = get_the_ID();
+        <article class="ec-event">
+            <h1><?php the_title(); ?></h1>
+            <div class="ec-event-content"><?php the_content(); ?></div>
 
-        // Метаполя даты
-        $start = get_post_meta($event_id, 'ec_event_start', true);
-        $end = get_post_meta($event_id, 'ec_event_end', true);
+            <?php
+            // Даты мероприятия
+            $start = get_post_meta(get_the_ID(), 'ec_event_start', true);
+            $end = get_post_meta(get_the_ID(), 'ec_event_end', true);
+            $address = get_post_meta(get_the_ID(), 'ec_event_address', true);
 
-        // Форматированные даты
-        $start_formatted = $start ? date_i18n('d.m.Y H:i', strtotime($start)) : null;
-        $end_formatted = $end ? date_i18n('d.m.Y H:i', strtotime($end)) : null;
+            // Таксономии
+            $type = get_the_term_list(get_the_ID(), 'ec_event_type', '', ', ');
+            $organizer = get_the_term_list(get_the_ID(), 'ec_organizer', '', ', ');
+            $location = get_the_term_list(get_the_ID(), 'ec_location', '', ', ');
+            ?>
 
-        // Таксономии
-        $organizers = get_the_term_list($event_id, 'ec_organizer', '', ', ');
-        $locations = get_the_term_list($event_id, 'ec_location', '', ', ');
-?>
-
-    <article id="post-<?php the_ID(); ?>" <?php post_class('ec-event'); ?>>
-        <header class="entry-header">
-            <h1 class="entry-title"><?php the_title(); ?></h1>
-
-            <ul class="event-meta">
-                <?php if ($start_formatted): ?>
-                    <li><strong>Начало:</strong> <?php echo esc_html($start_formatted); ?></li>
+            <div class="ec-event-meta">
+                <?php if ($start) : ?>
+                    <p><strong>Начало:</strong> <?php echo date('d.m.Y H:i', strtotime($start)); ?></p>
                 <?php endif; ?>
 
-                <?php if ($end_formatted): ?>
-                    <li><strong>Окончание:</strong> <?php echo esc_html($end_formatted); ?></li>
+                <?php if ($end) : ?>
+                    <p><strong>Окончание:</strong> <?php echo date('d.m.Y H:i', strtotime($end)); ?></p>
                 <?php endif; ?>
 
-                <?php if ($organizers): ?>
-                    <li><strong>Организатор:</strong> <?php echo wp_kses_post($organizers); ?></li>
+                <?php if ($type) : ?>
+                    <p><strong>Тип:</strong> <?php echo $type; ?></p>
                 <?php endif; ?>
 
-                <?php if ($locations): ?>
-                    <li><strong>Место проведения:</strong> <?php echo wp_kses_post($locations); ?></li>
+                <?php if ($organizer) : ?>
+                    <p><strong>Организатор:</strong> <?php echo $organizer; ?></p>
                 <?php endif; ?>
-            </ul>
-        </header>
 
-        <div class="entry-content">
-            <?php the_content(); ?>
-        </div>
-    </article>
+                <?php if ($location) : ?>
+                    <p><strong>Место проведения:</strong> <?php echo $location; ?></p>
+                <?php endif; ?>
 
-<?php
-    endwhile;
+                <?php if ($address) : ?>
+                    <p><strong>Адрес:</strong> <?php echo esc_html($address); ?></p>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($address) : ?>
+                <div id="yandex-map" style="width: 100%; height: 400px;"></div>
+                <script>
+                    window.ec_event_address = "<?php echo esc_js($address); ?>";
+                </script>
+            <?php endif; ?>
+        </article>
+
+    <?php endwhile;
 endif;
-?>
-</main>
 
-<?php get_footer(); ?>
+get_footer();

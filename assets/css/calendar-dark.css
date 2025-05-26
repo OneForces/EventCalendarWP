@@ -1,131 +1,166 @@
 :root {
-    --fc-bg: #121212;
-    --fc-text: #f1f1f1;
-    --fc-accent: #ffc107;
-    --fc-button-bg: #333;
-    --fc-button-text: #fff;
-    --fc-button-hover: #555;
-    --fc-border: #444;
-    --fc-slot-even: #1e1e1e;
-    --fc-slot-odd: #171717;
+    --fc-bg: #0f0f11;
+    --fc-inner-bg: #18181b;
+    --fc-text: #e0e0e0;
+    --fc-accent: #00bcd4;
+    --fc-button-bg: #242424;
+    --fc-button-hover: #303030;
+    --fc-button-text: #ffffff;
+    --fc-border: #2e2e2e;
+    --fc-highlight: #1f1f1f;
+    --fc-weekend-bg: #161616;
+    --fc-today-border: #00bcd4;
 }
 
-/* Общий фон и текст */
+/* Body + Общий фон */
 body {
-    background-color: var(--fc-bg);
+    background: #101010;
     color: var(--fc-text);
+    font-family: "Segoe UI", Roboto, sans-serif;
 }
 
+/* Календарь основной */
 .fc {
-    background-color: var(--fc-bg);
+    background-color: var(--fc-inner-bg);
     color: var(--fc-text);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
 }
 
-/* Заголовок */
+/* Toolbar */
 .fc-header-toolbar {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    gap: 0.5rem;
+    background: transparent;
+    padding: 0.75rem 0;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
-
-.fc-toolbar-chunk:nth-child(1) {
-    justify-self: start;
-}
-.fc-toolbar-chunk:nth-child(2) {
-    justify-self: center;
-}
-.fc-toolbar-chunk:nth-child(3) {
-    justify-self: end;
-    max-width: 320px;
-}
-
 .fc-toolbar-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--fc-accent);
     text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--fc-text);
-    margin: 0 auto;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Кнопки */
 .fc-button {
     background-color: var(--fc-button-bg);
     color: var(--fc-button-text);
-    border: none;
+    border: 1px solid var(--fc-border);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
 }
 .fc-button:hover {
     background-color: var(--fc-button-hover);
 }
 .fc-button-primary {
     background-color: var(--fc-accent);
-    color: #000;
-    border: none;
+    color: #fff;
+    font-weight: 600;
 }
 .fc-button-primary:hover {
-    background-color: #e0a800;
+    background-color: #00acc1;
 }
 
-/* Сетка дней */
-.fc-daygrid-day {
-    border: 1px solid var(--fc-border);
-}
-.fc-daygrid-day-number,
+/* Названия дней */
 .fc-col-header-cell-cushion {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #bdbdbd;
+}
+
+/* Ячейки дней */
+.fc-daygrid-day {
+    background-color: var(--fc-inner-bg);
+    border: 1px solid var(--fc-border);
+    transition: background 0.2s ease;
+}
+.fc-daygrid-day:hover {
+    background-color: #222;
+}
+.fc-day-today {
+    border: 2px solid var(--fc-today-border);
+    background-color: #202225;
+}
+.fc-daygrid-day-number {
+    color: var(--fc-text);
+    font-weight: 500;
+}
+
+/* Выходные */
+.fc-day-sat,
+.fc-day-sun {
+    background-color: var(--fc-weekend-bg);
+}
+
+/* Сообщение об отсутствии */
+.fc .fc-no-events {
+    color: #888;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+}
+
+/* Список мероприятий (левая колонка) */
+.ec-event-archive-grid {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.ec-event-list {
+    flex: 1 1 400px;
+    background: #1b1b1d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
     color: var(--fc-text);
 }
-
-/* Слоты времени */
-.fc-timegrid-slot {
-    height: 3rem;
-    border-bottom: 1px solid var(--fc-border);
+.ec-event-calendar {
+    flex: 2 1 600px;
+    background: #1b1b1d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
-.fc-timegrid-slot:nth-child(even) {
-    background-color: var(--fc-slot-even);
+.ec-event-list h2,
+.ec-event-calendar h2 {
+    color: var(--fc-accent);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: left;
 }
-.fc-timegrid-slot:nth-child(odd) {
-    background-color: var(--fc-slot-odd);
+.ec-event-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-.fc-timegrid-slot:last-child {
-    border-bottom: 2px solid var(--fc-border);
+.ec-event-list li {
+    background: #232427;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-left: 4px solid var(--fc-accent);
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+.ec-event-list li:hover {
+    background: #2a2c2f;
+}
+.ec-event-list a {
+    color: var(--fc-text);
+    text-decoration: none;
+    font-weight: 600;
 }
 
-/* Удаление лишнего авто-вытягивания */
-.fc-timegrid-slots,
-.fc-timegrid-slot-lane,
-.fc-timegrid-slot-lane:last-child,
-.fc-scroller-liquid-absolute,
-.fc-timegrid,
-.fc-timegrid-body {
-    background: var(--fc-bg) !important;
-    height: auto !important;
-    max-height: unset !important;
-    overflow: hidden !important;
-}
-
-/* Мобильная адаптация */
-@media (max-width: 420px) {
-    .fc-header-toolbar {
-        grid-template-columns: 1fr;
-    }
-
-    .fc-toolbar-chunk {
-        justify-self: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .fc-toolbar-title {
-        font-size: 1.2rem;
-        white-space: normal;
-        line-height: 1.3;
-    }
-
-    .fc .fc-button {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
+/* Адаптив */
+@media (max-width: 900px) {
+    .ec-event-archive-grid {
+        flex-direction: column;
     }
 }
+
