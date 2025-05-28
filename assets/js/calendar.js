@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'ru',
+        displayEventTime: false,
         slotDuration: '02:00:00',
         slotLabelInterval: '02:00',
         slotMinTime: '09:00:00',

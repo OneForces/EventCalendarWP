@@ -150,7 +150,7 @@ function ec_handle_get_events() {
     $args = [
         'post_type' => 'ec_event',
         'post_status' => 'publish',
-        'posts_per_page' => -1,
+        'posts_per_page' => 50,
         'orderby' => 'meta_value',
         'meta_key' => 'ec_event_start',
         'order' => 'ASC',
@@ -355,6 +355,7 @@ add_action('template_redirect', function () {
     $ics .= "DTEND:$dt_end\r\n";
     $ics .= "SUMMARY:" . esc_html($title) . "\r\n";
     $ics .= "DESCRIPTION:" . esc_html($desc) . "\\n" . $url . "\r\n";
+    $location = get_post_meta($event_id, 'ec_location_address', true);
     $ics .= "LOCATION:" . esc_html($location) . "\r\n";
     $ics .= "URL:$url\r\n";
     $ics .= "END:VEVENT\r\n";

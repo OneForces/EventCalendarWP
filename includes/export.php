@@ -34,31 +34,44 @@ function ec_export_events_to_csv() {
     $output = fopen('php://output', 'w');
     fputcsv($output, ['Название', 'Дата начала', 'Дата окончания', 'Организатор', 'Место', 'Тип']);
 
-    $query = new WP_Query([
-        'post_type' => 'ec_event',
-        'posts_per_page' => -1,
-    ]);
+    $paged = 1;
+    $per_page = 50;
 
-    while ($query->have_posts()) {
-        $query->the_post();
-
-        $start = get_post_meta(get_the_ID(), 'ec_event_start', true);
-        $end = get_post_meta(get_the_ID(), 'ec_event_end', true);
-
-        $organizer = wp_get_post_terms(get_the_ID(), 'ec_organizer', ['fields' => 'names']);
-        $location = wp_get_post_terms(get_the_ID(), 'ec_location', ['fields' => 'names']);
-        $type = wp_get_post_terms(get_the_ID(), 'ec_event_type', ['fields' => 'names']);
-
-        fputcsv($output, [
-            get_the_title(),
-            $start,
-            $end,
-            implode(', ', $organizer),
-            implode(', ', $location),
-            implode(', ', $type),
+    while (true) {
+        $query = new WP_Query([
+            'post_type'      => 'ec_event',
+            'posts_per_page' => $per_page,
+            'paged'          => $paged,
+            'post_status'    => 'publish',
         ]);
+
+        if (!$query->have_posts()) {
+            break;
+        }
+
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            $start    = get_post_meta(get_the_ID(), 'ec_event_start', true);
+            $end      = get_post_meta(get_the_ID(), 'ec_event_end', true);
+
+            $organizer = wp_get_post_terms(get_the_ID(), 'ec_organizer', ['fields' => 'names']);
+            $location  = wp_get_post_terms(get_the_ID(), 'ec_location', ['fields' => 'names']);
+            $type      = wp_get_post_terms(get_the_ID(), 'ec_event_type', ['fields' => 'names']);
+
+            fputcsv($output, [
+                get_the_title(),
+                $start,
+                $end,
+                implode(', ', $organizer),
+                implode(', ', $location),
+                implode(', ', $type),
+            ]);
+        }
+
+        wp_reset_postdata();
+        $paged++;
     }
 
-    wp_reset_postdata();
     fclose($output);
 }

@@ -1,5 +1,12 @@
 <?php
 
+add_action('admin_init', function () {
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
+    }
+});
+
 // 🗓️ Шорткод календаря
 if (!function_exists('ec_calendar_shortcode')) {
     function ec_calendar_shortcode() {
@@ -19,7 +26,7 @@ add_action('restrict_manage_posts', function($post_type) {
 
     $events = get_posts([
         'post_type' => 'ec_event',
-        'posts_per_page' => -1,
+        'posts_per_page' => 100,
         'post_status' => 'publish',
         'orderby' => 'title',
         'order' => 'ASC'
@@ -167,7 +174,20 @@ function ec_add_breadcrumbs_to_event_page($content) {
     return $breadcrumbs . $content;
 }
 
-// 💾 Сохранение описания места
+add_action('ec_location_edit_form_fields', function($term) {
+    $value = get_term_meta($term->term_id, 'ec_location_description', true);
+    ?>
+    <tr class="form-field">
+        <th scope="row"><label for="ec_location_description">Адрес</label></th>
+        <td>
+            <textarea name="ec_location_description" id="ec_location_description" rows="3" style="width:100%;"><?= esc_textarea($value) ?></textarea>
+            <p class="description">Введите адрес места проведения</p>
+        </td>
+    </tr>
+    <?php
+});
+
+
 add_action('edited_ec_location', 'ec_save_location_meta');
 add_action('create_ec_location', 'ec_save_location_meta');
 function ec_save_location_meta($term_id) {
@@ -207,3 +227,64 @@ add_filter('wp_terms_checklist_args', function($args) {
     $args['checked_ontop'] = false;
     return $args;
 });
+
+
+add_action('add_meta_boxes', function () {
+    remove_meta_box('ec_event_typediv', 'ec_event', 'side');
+    add_meta_box(
+        'ec_event_type_custom',
+        'Выберите тип мероприятия',
+        'render_event_type_dropdown',
+        'ec_event',
+        'side',
+        'default'
+    );
+});
+
+add_action('add_meta_boxes', function () {
+    // Удаляем стандартные блоки
+    remove_meta_box('ec_event_typediv', 'ec_event', 'side');
+    remove_meta_box('ec_organizerdiv', 'ec_event', 'side');
+    remove_meta_box('ec_locationdiv', 'ec_event', 'side');
+
+    // Добавляем кастомные селекты
+    add_meta_box('ec_event_type_custom', 'Тип мероприятия', fn() => ec_render_tax_dropdown('ec_event_type'), 'ec_event', 'side');
+    add_meta_box('ec_organizer_custom', 'Организатор', fn() => ec_render_tax_dropdown('ec_organizer'), 'ec_event', 'side');
+    add_meta_box('ec_location_custom', 'Место проведения', fn() => ec_render_tax_dropdown('ec_location'), 'ec_event', 'side');
+});
+
+// Рендер универсального dropdown'а
+if (!function_exists('ec_render_tax_dropdown')) {
+    function ec_render_tax_dropdown($taxonomy) {
+        global $post;
+        $terms = get_terms(['taxonomy' => $taxonomy, 'hide_empty' => false]);
+        $selected = wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids']);
+        $label = get_taxonomy($taxonomy)->labels->singular_name;
+
+        echo '<div class="form-field" style="margin-bottom: 12px;">';
+        echo '<label for="' . esc_attr($taxonomy) . '">Выберите ' . esc_html(strtolower($label)) . '</label>';
+        echo '<select name="' . esc_attr($taxonomy) . '" id="' . esc_attr($taxonomy) . '" style="width:100%;margin-top:4px;">';
+        echo '<option value="">-- Выберите --</option>';
+
+        foreach ($terms as $term) {
+            $is_selected = in_array($term->term_id, $selected) ? 'selected' : '';
+            echo '<option value="' . esc_attr($term->term_id) . '" ' . $is_selected . '>' . esc_html($term->name) . '</option>';
+        }
+
+        echo '</select>';
+        echo '</div>';
+    }
+}
+
+
+// Сохраняем выбор
+add_action('save_post', function ($post_id) {
+    $taxonomies = ['ec_event_type', 'ec_organizer', 'ec_location'];
+    foreach ($taxonomies as $tax) {
+        if (isset($_POST[$tax])) {
+            wp_set_object_terms($post_id, intval($_POST[$tax]), $tax);
+        }
+    }
+});
+
+
